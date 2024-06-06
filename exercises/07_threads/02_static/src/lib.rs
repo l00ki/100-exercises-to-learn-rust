@@ -4,7 +4,22 @@
 use std::thread;
 
 pub fn sum(slice: &'static [i32]) -> i32 {
-    todo!()
+    let n = slice.len();
+
+    let slices = vec![&slice[..n/2], &slice[n/2..]];
+
+    let mut threads = vec![];
+    for s in slices {
+        threads.push(
+            thread::spawn(
+                || -> i32 {
+                    s.into_iter().sum::<i32>()
+                }
+            )
+        )
+    }
+
+    threads.into_iter().map(|t| t.join().unwrap()).sum::<i32>()
 }
 
 #[cfg(test)]
